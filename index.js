@@ -11,10 +11,13 @@ const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 
 let submittedUsers = new Set();
 
+const HOURS = "11";
+const MINUTES = ["05", "10", "15", "20"];
+
 // Gửi thống kê cuối ngày
 async function sendSummary() {
   const groupUsers = await getGroupMembers();
-  console.log('group users =======',  groupUsers)
+  console.log("group users =======", groupUsers);
   let notSubmitted = groupUsers.filter((user) => !submittedUsers.has(user.id));
 
   let report = "📌 *DANH SÁCH CHƯA NỘP BÀI:*\n";
@@ -32,7 +35,6 @@ async function getGroupMembers() {
     const response = await axios.get(`${TELEGRAM_API}/getChatAdministrators`, {
       params: { chat_id: CHAT_ID },
     });
-    console.log('response ======', response.data.result)
     return response.data.result.map((admin) => admin.user);
   } catch (error) {
     console.error("Lỗi khi lấy danh sách thành viên:", error.message);
@@ -67,12 +69,14 @@ async function sendMessage(chatId, text) {
 }
 
 // Cài đặt lịch trình chạy mỗi ngày (ví dụ: 23:50)
-// setInterval(() => {
-//   const now = new Date();
-//   if (now.getHours() === 23 && now.getMinutes() === 50) {
-//     sendSummary();
-//   }
-// }, 60000); // Kiểm tra mỗi phút
+setInterval(() => {
+  const now = new Date();
+  const currentHours = now.getHours(); 
+  const currentMinutes = now.getMinutes();
+  if (String(currentHours) === currentHours && MINUTES.includes(currentMinutes)) {
+    sendSummary();
+  }
+}, 60000); // Kiểm tra mỗi phút
 
 // Chạy server
 const PORT = process.env.PORT || 3000;
