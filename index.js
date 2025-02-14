@@ -76,7 +76,10 @@ setInterval(() => {
   const now = new Date();
   const currentHours = now.getHours();
   const currentMinutes = now.getMinutes();
-  if (String(currentHours) === HOURS && MINUTES.includes(currentMinutes)) {
+  if (
+    String(currentHours) === HOURS &&
+    MINUTES.includes(String(currentMinutes))
+  ) {
     sendSummary();
   }
 }, 60000); // Kiểm tra mỗi phút
