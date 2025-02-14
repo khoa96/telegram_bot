@@ -12,7 +12,7 @@ const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 let submittedUsers = new Set();
 
 const HOURS = "11";
-const MINUTES = ["05", "10", "15", "20"];
+const MINUTES = ["05", "10", "15", "20", "25", "30"];
 
 // Gửi thống kê cuối ngày
 async function sendSummary() {
@@ -51,9 +51,12 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
 
   if (message.text.includes("#track")) {
     submittedUsers.add(userId);
-    await sendMessage(message.chat.id, `Cảm ơn @${username} đã gửi bài tập. Hãy giữ tinh thần học tập nhé!`);
-  } else if (message.text.includes("#summary")){
-    sendSummary()
+    await sendMessage(
+      message.chat.id,
+      `Cảm ơn @${username} đã gửi bài tập. Hãy giữ tinh thần học tập nhé!`
+    );
+  } else if (message.text.includes("#summary")) {
+    sendSummary();
   }
 
   res.sendStatus(200);
@@ -71,9 +74,9 @@ async function sendMessage(chatId, text) {
 // Cài đặt lịch trình chạy mỗi ngày (ví dụ: 23:50)
 setInterval(() => {
   const now = new Date();
-  const currentHours = now.getHours(); 
+  const currentHours = now.getHours();
   const currentMinutes = now.getMinutes();
-  if (String(currentHours) === currentHours && MINUTES.includes(currentMinutes)) {
+  if (String(currentHours) === HOURS && MINUTES.includes(currentMinutes)) {
     sendSummary();
   }
 }, 60000); // Kiểm tra mỗi phút

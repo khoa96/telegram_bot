@@ -4,3 +4,13 @@
 // curl -X POST "https://api.telegram.org/bot8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY/setWebhook?url=https://your-ngrok-url/webhook/8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY"
 
 // curl -X POST "https://api.telegram.org/bot8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY/setWebhook?url=https://c969-118-71-105-159.ngrok-free.app/webhook/8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY"
+
+// URL=https://telegram-bot-finb.onrender.com
+
+// curl https://api.telegram.org/bot8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY/getWebhookInfo
+
+
+// curl -X POST "https://api.telegram.org/bot8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY/setWebhook" -d "url=https://telegram-bot-finb.onrender.com/webhook/8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY"
+
+
+// curl -X POST "https://api.telegram.org/bot8121298727:AAHMsUCir6ceXIivUQvNDg_Ep99G9nnF_ZY/deleteWebhook"
