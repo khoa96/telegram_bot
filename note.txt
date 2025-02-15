@@ -37,3 +37,24 @@ curl https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/
 curl -v -X POST "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/sendMessage" \
      -d "chat_id=-1002343434921" \
      -d "text=Hello from curl test!"
+
+
+
+https://telegram-bot-finb.onrender.com
+curl -X POST "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/deleteWebhook"
+curl -X POST "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/setWebhook" -d "url=https://3096-2402-800-61b3-40a1-c5c3-d8a4-cc59-4726.ngrok-free.app/webhook/7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo"
+curl https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/getWebhookInfo
+
+
+curl -X POST "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/sendMessage" \
+     -H "Content-Type: application/json" \
+     -d '{"chat_id": "-1002343434921", "text": "Hello from bot!"}'
+
+
+curl -X POST "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/deleteWebhook" \
+     -d "drop_pending_updates=true"
+
+curl -X POST "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/setWebhook" -d "url=https://9a79-2402-800-61b3-40a1-c5c3-d8a4-cc59-4726.ngrok-free.app/webhook/7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo"
+
+
+curl -X GET "https://api.telegram.org/bot7661931570:AAEhK10g3Pm9OEg8GzVnbya084s-XPo9aqo/getChatAdministrators?chat_id=-1002343434921"
