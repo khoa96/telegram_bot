@@ -141,7 +141,7 @@ initialize();
 setInterval(() => {
   const now = new Date();
   const currentHours = now.getHours();
-  const currentMinutes = String(now.getMinutes()).padStart(2, "0");
+  const currentMinutes = now.getMinutes();
   if (String(currentHours) === HOURS && String(currentMinutes) === MINUTES) {
     sendReportToGroups();
   }
