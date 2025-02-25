@@ -14,6 +14,7 @@ let trackedUsersByGroup = {}; // Dữ liệu lưu danh sách thành viên theo t
 
 const HOURS = process.env.HOURS;
 const MINUTES = process.env.MINUTES;
+const HASHTAG = "#submit";
 
 function getFormatedDate() {
   const now = new Date();
@@ -81,7 +82,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const username =
     message.from.username || message.from.first_name || message.from.last_name;
 
-  if (message.text.includes("#track")) {
+  if (message.text.includes(HASHTAG)) {
     submittedUsers.add(userId);
     if (!userReportsByGroup[chatId]) {
       userReportsByGroup[chatId] = [];
@@ -101,7 +102,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
 
     await sendMessage(
       message.chat.id,
-      `Cảm ơn @${username} đã gửi bài tập. Hãy giữ tinh thần học tập nhé!`
+      `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`
     );
   } else if (message.text.includes("#summary")) {
     // send a report for the group chat
