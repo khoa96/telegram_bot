@@ -8,6 +8,7 @@ app.use(express.json());
 const TOKEN = process.env.BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 const GROUP_CHAT_IDS = process.env.GROUP_CHAT_IDS.split(",").map(Number);
+
 let submittedUsers = new Set();
 let userReportsByGroup = {}; // Dữ liệu lưu trữ bài tập theo từng nhóm
 let trackedUsersByGroup = {}; // Dữ liệu lưu danh sách thành viên theo từng nhóm
@@ -30,6 +31,8 @@ async function fetchGroupMembers(chatId) {
     const response = await axios.get(`${TELEGRAM_API}/getChatAdministrators`, {
       params: { chat_id: chatId },
     });
+
+    console.log("resposne =======", response);
 
     trackedUsersByGroup[chatId] = response.data.result.map(
       (admin) => admin.user
@@ -75,6 +78,7 @@ async function sendReportToGroups() {
 // Xử lý webhook nhận tin nhắn từ Telegram
 app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const message = req.body.message;
+  console.log("message =====", message);
   if (!message || !message.text) return res.sendStatus(200);
 
   const userId = message.from.id;

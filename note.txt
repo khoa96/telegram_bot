@@ -1,0 +1,14 @@
+
+curl -X GET "https://api.telegram.org/bot7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ/getUpdates"
+
+curl -X POST "https://api.telegram.org/bot7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ/deleteWebhook" \
+     -d "drop_pending_updates=true"
+
+
+curl https://api.telegram.org/bot7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ/getWebhookInfo
+
+
+curl -X POST "https://api.telegram.org/bot7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ/setWebhook?url=https://telegram-bot-finb.onrender.com/webhook/7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ"
+
+https://f745-42-113-157-140.ngrok-free.app
+curl -X POST "https://api.telegram.org/bot7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ/setWebhook?url=https://f745-42-113-157-140.ngrok-free.app/webhook/7710567516:AAG8BznYEVZgqJ6obm6Wkz_iK_kcLDdr-WQ"
