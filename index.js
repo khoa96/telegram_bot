@@ -84,7 +84,6 @@ async function sendReportToGroups() {
 // Xử lý webhook nhận tin nhắn từ Telegram
 app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const message = req.body.message;
-  console.log("message =====", message);
   if (!message) return res.sendStatus(200);
 
   const threadId = message.message_thread_id;
@@ -107,6 +106,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
     lowerCaseCaptionMessage.includes(REPORT);
 
   if (isCanRespond) {
+    console.log("=====call 01 ===");
     submittedUsers.add(userId);
     if (!userReportsByGroup[chatId]) {
       userReportsByGroup[chatId] = [];
@@ -128,6 +128,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
     return;
   }
   if (isCanReport) {
+    console.log("=====call 02 ===");
     sendReport(chatId);
   }
   res.sendStatus(200);
