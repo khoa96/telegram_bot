@@ -33,14 +33,10 @@ async function fetchGroupMembers(chatId) {
     const response = await axios.get(`${TELEGRAM_API}/getChatAdministrators`, {
       params: { chat_id: chatId },
     });
-
-    console.log("resposne =======", response);
-
     trackedUsersByGroup[chatId] = response.data.result.map(
       (admin) => admin.user
     );
     userReportsByGroup[chatId] = [];
-    console.log("userReportsByGroup ======", trackedUsersByGroup);
   } catch (error) {
     console.error(`Lỗi kết nối Telegram API cho nhóm ${chatId}:`, error);
   }
@@ -50,7 +46,7 @@ async function sendReport(chatId) {
   try {
     const groupUsers = trackedUsersByGroup[chatId] || [];
     const userReported = userReportsByGroup[chatId] || [];
-    const threadId = threadIdsByGroup[chatId] || ""; // Lấy threadId đã lưu
+    // const threadId = threadIdsByGroup[chatId] || ""; // Lấy threadId đã lưu
     let notSubmitted = groupUsers.filter((user) => {
       return !user.is_bot && !userReported.includes(String(user.id));
     });
@@ -67,12 +63,13 @@ async function sendReport(chatId) {
       })
       .join("\n");
 
-    console.log("thread Id =====", threadId);
-    if (!!threadId) {
-      await sendMessage(chatId, report, threadId);
-    } else {
-      await sendMessage(chatId, report, "");
-    }
+    // console.log("thread Id =====", threadId);
+    // if (!!threadId) {
+    //   await sendMessage(chatId, report, threadId);
+    // } else {
+    //   await sendMessage(chatId, report, "");
+    // }
+    await sendMessage2(chatId, report);
     userReportsByGroup[chatId] = [];
   } catch (err) {}
 }
@@ -127,6 +124,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
       `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`,
       threadId
     );
+    console.log("threadIdsByGroup =====", threadIdsByGroup);
     return;
   }
   if (isCanReport) {
@@ -153,6 +151,24 @@ async function sendMessage(chatId, text, messageThreadId) {
         parse_mode: "Markdown",
       });
     }
+    console.log("📩 Message sent:", response.data);
+  } catch (error) {
+    console.error(
+      "🚨 Error sending message:",
+      error.response?.data || error.message
+    );
+  }
+}
+
+async function sendMessage2(chatId, text) {
+  try {
+    const response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id: chatId,
+      text: text,
+      parse_mode: "Markdown",
+      message_thread_id: messageThreadId, // Gửi đúng forum
+    });
+
     console.log("📩 Message sent:", response.data);
   } catch (error) {
     console.error(
