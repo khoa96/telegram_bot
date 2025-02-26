@@ -162,11 +162,11 @@ async function sendMessage(chatId, text, messageThreadId) {
 
 async function sendMessage2(chatId, text) {
   try {
+    console.log("=====call here ====");
     const response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: text,
       parse_mode: "Markdown",
-      message_thread_id: messageThreadId, // Gửi đúng forum
     });
 
     console.log("📩 Message sent:", response.data);
