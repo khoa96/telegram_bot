@@ -105,6 +105,16 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
     lowerCaseTextMessage.includes(HASHTAG) ||
     lowerCaseCaptionMessage.includes(HASHTAG);
 
+  console.log(
+    "lowerCaseTextMessage.includes(HASHTAG) ====",
+    lowerCaseTextMessage.includes(HASHTAG)
+  );
+
+  console.log(
+    " lowerCaseCaptionMessage.includes(HASHTAG) ====",
+    lowerCaseCaptionMessage.includes(HASHTAG)
+  );
+
   const isCanReport =
     lowerCaseTextMessage.includes(REPORT) ||
     lowerCaseCaptionMessage.includes(REPORT);
@@ -174,7 +184,7 @@ async function sendMessage2(chatId, text) {
       parse_mode: "Markdown",
     });
 
-    console.log("📩 Message sent:", response.data);
+    // console.log("📩 Message sent:", response.data);
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
