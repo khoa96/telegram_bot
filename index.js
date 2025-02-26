@@ -44,6 +44,7 @@ async function fetchGroupMembers(chatId) {
 
 async function sendReport(chatId) {
   try {
+    console.log("=======call send report ===");
     const groupUsers = trackedUsersByGroup[chatId] || [];
     const userReported = userReportsByGroup[chatId] || [];
     // const threadId = threadIdsByGroup[chatId] || ""; // Lấy threadId đã lưu
@@ -96,6 +97,9 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const captionMessage = message.caption || "";
   const lowerCaseTextMessage = textMessage.toLowerCase();
   const lowerCaseCaptionMessage = captionMessage.toLowerCase();
+
+  console.log("lowerCaseTextMessage=====", lowerCaseTextMessage);
+  console.log("lowerCaseCaptionMessage", lowerCaseCaptionMessage);
 
   const isCanRespond =
     lowerCaseTextMessage.includes(HASHTAG) ||
@@ -152,7 +156,7 @@ async function sendMessage(chatId, text, messageThreadId) {
         parse_mode: "Markdown",
       });
     }
-    console.log("📩 Message sent:", response.data);
+    // console.log("📩 Message sent:", response.data);
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
