@@ -17,6 +17,7 @@ let threadIdsByGroup = {}; // lưu danh sách threadId đã fgửi
 const HOURS = process.env.HOURS;
 const MINUTES = process.env.MINUTES;
 const HASHTAG = "#submit";
+const REPORT = "#report";
 
 function getFormatedDate() {
   const now = new Date();
@@ -66,11 +67,8 @@ async function sendReport(chatId) {
       })
       .join("\n");
 
-    if (threadId) {
-      await sendMessage(chatId, report, threadId);
-    } else {
-      await sendMessage(chatId, report);
-    }
+    console.log("thread Id =====", threadId);
+    await sendMessage(chatId, report, threadId);
     userReportsByGroup[chatId] = [];
   } catch (err) {}
 }
@@ -103,6 +101,10 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
     lowerCaseTextMessage.includes(HASHTAG) ||
     lowerCaseCaptionMessage.includes(HASHTAG);
 
+  const isCanReport =
+    lowerCaseTextMessage.includes(REPORT) ||
+    lowerCaseCaptionMessage.includes(REPORT);
+
   if (isCanRespond) {
     submittedUsers.add(userId);
     if (!userReportsByGroup[chatId]) {
@@ -121,7 +123,8 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
       `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`,
       threadId
     );
-  } else if (message.text.includes("#summary")) {
+  }
+  if (isCanReport) {
     sendReport(chatId);
   }
   res.sendStatus(200);
