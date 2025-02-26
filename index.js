@@ -68,7 +68,11 @@ async function sendReport(chatId) {
       .join("\n");
 
     console.log("thread Id =====", threadId);
-    await sendMessage(chatId, report, threadId);
+    if (!!threadId) {
+      await sendMessage(chatId, report, threadId);
+    } else {
+      await sendMessage(chatId, report, "");
+    }
     userReportsByGroup[chatId] = [];
   } catch (err) {}
 }
@@ -123,6 +127,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
       `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`,
       threadId
     );
+    return;
   }
   if (isCanReport) {
     sendReport(chatId);
@@ -134,7 +139,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
 async function sendMessage(chatId, text, messageThreadId) {
   try {
     let response;
-    if (messageThreadId) {
+    if (!!messageThreadId) {
       response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
         text: text,
