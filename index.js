@@ -12,6 +12,7 @@ const GROUP_CHAT_IDS = process.env.GROUP_CHAT_IDS.split(",").map(Number);
 let submittedUsers = new Set();
 let userReportsByGroup = {}; // Dữ liệu lưu trữ bài tập theo từng nhóm
 let trackedUsersByGroup = {}; // Dữ liệu lưu danh sách thành viên theo từng nhóm
+let threadIdsByGroup = {}; // lưu danh sách threadId đã fgửi
 
 const HOURS = process.env.HOURS;
 const MINUTES = process.env.MINUTES;
@@ -38,6 +39,7 @@ async function fetchGroupMembers(chatId) {
       (admin) => admin.user
     );
     userReportsByGroup[chatId] = [];
+    console.log("userReportsByGroup ======", trackedUsersByGroup);
   } catch (error) {
     console.error(`Lỗi kết nối Telegram API cho nhóm ${chatId}:`, error);
   }
@@ -47,6 +49,7 @@ async function sendReport(chatId) {
   try {
     const groupUsers = trackedUsersByGroup[chatId] || [];
     const userReported = userReportsByGroup[chatId] || [];
+    const threadId = threadIdsByGroup[chatId] || ""; // Lấy threadId đã lưu
     let notSubmitted = groupUsers.filter((user) => {
       return !user.is_bot && !userReported.includes(String(user.id));
     });
@@ -63,7 +66,11 @@ async function sendReport(chatId) {
       })
       .join("\n");
 
-    await sendMessage(chatId, report);
+    if (threadId) {
+      await sendMessage(chatId, report, threadId);
+    } else {
+      await sendMessage(chatId, report);
+    }
     userReportsByGroup[chatId] = [];
   } catch (err) {}
 }
@@ -79,50 +86,65 @@ async function sendReportToGroups() {
 app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const message = req.body.message;
   console.log("message =====", message);
-  if (!message || !message.text) return res.sendStatus(200);
+  if (!message) return res.sendStatus(200);
 
+  const threadId = message.message_thread_id;
   const userId = message.from.id;
   const chatId = message.chat.id;
   const username =
     message.from.username || message.from.first_name || message.from.last_name;
 
-  if (message.text.includes(HASHTAG)) {
+  const textMessage = message.text || "";
+  const captionMessage = message.caption || "";
+  const lowerCaseTextMessage = textMessage.toLowerCase();
+  const lowerCaseCaptionMessage = captionMessage.toLowerCase();
+
+  const isCanRespond =
+    lowerCaseTextMessage.includes(HASHTAG) ||
+    lowerCaseCaptionMessage.includes(HASHTAG);
+
+  if (isCanRespond) {
     submittedUsers.add(userId);
     if (!userReportsByGroup[chatId]) {
       userReportsByGroup[chatId] = [];
     }
-    let currentUserReportsByGroup = userReportsByGroup[chatId];
-    const isExist = currentUserReportsByGroup.some(
-      (id) => String(id) === String(userId)
-    );
-    if (isExist) {
-      currentUserReportsByGroup = currentUserReportsByGroup.filter(
-        (id) => String(id) !== String(userId)
-      );
-    } else {
-      currentUserReportsByGroup.push(String(userId));
+
+    if (!threadIdsByGroup[chatId] && threadId) {
+      threadIdsByGroup[chatId] = threadId; // Lưu threadId cho nhóm
     }
+    let currentUserReportsByGroup = userReportsByGroup[chatId];
+    currentUserReportsByGroup.push(String(userId));
     userReportsByGroup[chatId] = currentUserReportsByGroup;
 
     await sendMessage(
       message.chat.id,
-      `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`
+      `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`,
+      threadId
     );
   } else if (message.text.includes("#summary")) {
-    // send a report for the group chat
     sendReport(chatId);
   }
   res.sendStatus(200);
 });
 
 // Hàm gửi tin nhắn
-async function sendMessage(chatId, text) {
+async function sendMessage(chatId, text, messageThreadId) {
   try {
-    const response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id: chatId,
-      text: text,
-      parse_mode: "Markdown",
-    });
+    let response;
+    if (messageThreadId) {
+      response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: text,
+        parse_mode: "Markdown",
+        message_thread_id: messageThreadId, // Gửi đúng forum
+      });
+    } else {
+      response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: text,
+        parse_mode: "Markdown",
+      });
+    }
     console.log("📩 Message sent:", response.data);
   } catch (error) {
     console.error(
@@ -146,7 +168,10 @@ setInterval(() => {
   const now = new Date();
   const currentHours = now.getHours();
   const currentMinutes = now.getMinutes();
-  if (String(currentHours) === HOURS && String(currentMinutes) === MINUTES) {
+  if (
+    String(currentHours) === String(HOURS) &&
+    String(currentMinutes) === String(MINUTES)
+  ) {
     sendReportToGroups();
   }
 }, 60000);
