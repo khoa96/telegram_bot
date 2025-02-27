@@ -190,8 +190,18 @@ initialize();
 // Cài đặt lịch trình chạy mỗi ngày (ví dụ: 23:50)
 setInterval(() => {
   const now = new Date();
-  const timeString = now.toLocaleTimeString("en-GB", { hour12: false }); // Định dạng 24h
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Ho_Chi_Minh", // Đặt múi giờ cố định
+  });
+
+  const timeString = formatter.format(now);
   const [currentHours, currentMinutes] = timeString.split(":").map(Number);
+
+  console.log(currentHours, currentMinutes);
   console.log("currentHours =====", currentHours);
   console.log("currentMinutes =====", currentMinutes);
   console.log("HOURS =====", HOURS);
@@ -199,10 +209,10 @@ setInterval(() => {
   const test =
     String(currentHours) === String(HOURS) &&
     String(currentMinutes) === String(MINUTES);
-  console.log("=========check 1111======", test);
+  console.log("=========check 2222======", test);
   if (
-    String(currentHours) === String(HOURS) &&
-    String(currentMinutes) === String(MINUTES)
+    String(currentHours) === "9" &&
+    String(currentMinutes) === "50"
   ) {
     sendReportToGroups();
     userReportsByGroup[chatId] = [];
