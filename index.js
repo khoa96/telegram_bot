@@ -190,8 +190,8 @@ initialize();
 // Cài đặt lịch trình chạy mỗi ngày (ví dụ: 23:50)
 setInterval(() => {
   const now = new Date();
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
+  const timeString = now.toLocaleTimeString("en-GB", { hour12: false }); // Định dạng 24h
+  const [currentHours, currentMinutes] = timeString.split(":").map(Number);
   console.log("currentHours =====", currentHours);
   console.log("currentMinutes =====", currentMinutes);
   console.log("HOURS =====", HOURS);
