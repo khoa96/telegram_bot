@@ -57,15 +57,14 @@ async function sendReport(chatId) {
     report += notSubmitted
       .map((user) => {
         const mention = user.username || user.first_name || user.last_name;
-        const lastName = user?.last_name || "";
-        const firstName = user?.first_name || "";
+        const lastName = user.last_name || "";
+        const firstName = user.first_name || "";
         let username = `${lastName} ${firstName}`;
         return `@${mention} (${username})`;
       })
       .join("\n");
 
     await sendMessage2(chatId, report);
-    userReportsByGroup[chatId] = [];
   } catch (err) {}
 }
 
@@ -103,7 +102,6 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
     (lowerCaseCaptionMessage && lowerCaseCaptionMessage.includes(REPORT));
 
   if (isCanRespond) {
-    console.log("=====call send message ===");
     submittedUsers.add(userId);
     if (!userReportsByGroup[chatId]) {
       userReportsByGroup[chatId] = [];
@@ -153,7 +151,7 @@ async function sendMessage(chatId, text, messageThreadId) {
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
-      error.response?.data || error.message
+      error.response.data || error.message
     );
   }
 }
@@ -168,7 +166,7 @@ async function sendMessage2(chatId, text) {
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
-      error.response?.data || error.message
+      error.response.data || error.message
     );
   }
 }
@@ -192,8 +190,9 @@ setInterval(() => {
     String(currentMinutes) === String(MINUTES)
   ) {
     sendReportToGroups();
+    userReportsByGroup[chatId] = [];
   }
-}, 60000);
+}, 5000);
 
 
 // Chạy server
