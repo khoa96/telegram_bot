@@ -17,7 +17,7 @@ let threadIdsByGroup = {}; // lưu danh sách threadId đã fgửi
 const HOURS = process.env.HOURS;
 const MINUTES = process.env.MINUTES;
 const HASHTAG = "#submit";
-const REPORT = "#report";
+const REPORT = "#summary";
 
 function getFormatedDate() {
   const now = new Date();
@@ -64,12 +64,6 @@ async function sendReport(chatId) {
       })
       .join("\n");
 
-    // console.log("thread Id =====", threadId);
-    // if (!!threadId) {
-    //   await sendMessage(chatId, report, threadId);
-    // } else {
-    //   await sendMessage(chatId, report, "");
-    // }
     await sendMessage2(chatId, report);
     userReportsByGroup[chatId] = [];
   } catch (err) {}
@@ -85,7 +79,9 @@ async function sendReportToGroups() {
 // Xử lý webhook nhận tin nhắn từ Telegram
 app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const message = req.body.message;
-  if (!message) return res.sendStatus(200);
+  console.log("message =======", message);
+  if (!message || (!message.caption && !message.text))
+    return res.sendStatus(200);
 
   const threadId = message.message_thread_id;
   const userId = message.from.id;
@@ -98,29 +94,16 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
   const lowerCaseTextMessage = textMessage.toLowerCase();
   const lowerCaseCaptionMessage = captionMessage.toLowerCase();
 
-  console.log("lowerCaseTextMessage=====", lowerCaseTextMessage);
-  console.log("lowerCaseCaptionMessage", lowerCaseCaptionMessage);
-
   const isCanRespond =
-    lowerCaseTextMessage.includes(HASHTAG) ||
-    lowerCaseCaptionMessage.includes(HASHTAG);
-
-  console.log(
-    "lowerCaseTextMessage.includes(HASHTAG) ====",
-    lowerCaseTextMessage.includes(HASHTAG)
-  );
-
-  console.log(
-    " lowerCaseCaptionMessage.includes(HASHTAG) ====",
-    lowerCaseCaptionMessage.includes(HASHTAG)
-  );
+    (lowerCaseTextMessage && lowerCaseTextMessage.includes(HASHTAG)) ||
+    (lowerCaseCaptionMessage && lowerCaseCaptionMessage.includes(HASHTAG));
 
   const isCanReport =
-    lowerCaseTextMessage.includes(REPORT) ||
-    lowerCaseCaptionMessage.includes(REPORT);
+    (lowerCaseTextMessage && lowerCaseTextMessage.includes(REPORT)) ||
+    (lowerCaseCaptionMessage && lowerCaseCaptionMessage.includes(REPORT));
 
   if (isCanRespond) {
-    console.log("=====call 01 ===");
+    console.log("=====call send message ===");
     submittedUsers.add(userId);
     if (!userReportsByGroup[chatId]) {
       userReportsByGroup[chatId] = [];
@@ -130,7 +113,12 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
       threadIdsByGroup[chatId] = threadId; // Lưu threadId cho nhóm
     }
     let currentUserReportsByGroup = userReportsByGroup[chatId];
-    currentUserReportsByGroup.push(String(userId));
+    const isExist = currentUserReportsByGroup.some(
+      (id) => String(id) === String(userId)
+    );
+    if (!isExist) {
+      currentUserReportsByGroup.push(String(userId));
+    }
     userReportsByGroup[chatId] = currentUserReportsByGroup;
 
     await sendMessage(
@@ -138,11 +126,7 @@ app.post(`/webhook/${TOKEN}`, async (req, res) => {
       `Cảm ơn @${username} đã gửi bài tập. Hãy học tiếng Anh đều đặn nhé!`,
       threadId
     );
-    console.log("threadIdsByGroup =====", threadIdsByGroup);
-    return;
-  }
-  if (isCanReport) {
-    console.log("=====call 02 ===");
+  } else if (isCanReport) {
     sendReport(chatId);
   }
   res.sendStatus(200);
@@ -166,7 +150,6 @@ async function sendMessage(chatId, text, messageThreadId) {
         parse_mode: "Markdown",
       });
     }
-    // console.log("📩 Message sent:", response.data);
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
@@ -177,14 +160,11 @@ async function sendMessage(chatId, text, messageThreadId) {
 
 async function sendMessage2(chatId, text) {
   try {
-    console.log("=====call here ====");
     const response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: text,
       parse_mode: "Markdown",
     });
-
-    // console.log("📩 Message sent:", response.data);
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
