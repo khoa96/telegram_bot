@@ -199,7 +199,7 @@ setInterval(() => {
   const test =
     String(currentHours) === String(HOURS) &&
     String(currentMinutes) === String(MINUTES);
-  console.log("=========check======", test);
+  console.log("=========check 1111======", test);
   if (
     String(currentHours) === String(HOURS) &&
     String(currentMinutes) === String(MINUTES)
