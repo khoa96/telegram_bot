@@ -164,6 +164,7 @@ async function sendSummary(chatId, text) {
       text: text,
       parse_mode: "Markdown",
     });
+    userReportsByGroup[chatId] = [];
   } catch (error) {
     console.error(
       "🚨 Error sending message:",
@@ -200,10 +201,10 @@ setInterval(() => {
   ) {
     sendReportToGroups();
     // reset danh sach
-    const groupChatIds = GROUP_CHAT_IDS;
-    for (const chatId of groupChatIds) {
-      userReportsByGroup[chatId] = [];
-    }
+    // const groupChatIds = GROUP_CHAT_IDS;
+    // for (const chatId of groupChatIds) {
+    //   userReportsByGroup[chatId] = [];
+    // }
   }
 }, 60000);
 
