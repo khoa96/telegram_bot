@@ -48,13 +48,15 @@ async function sendReport(chatId) {
     const groupUsers = trackedUsersByGroup[chatId] || [];
     const userReported = userReportsByGroup[chatId] || [];
     // const threadId = threadIdsByGroup[chatId] || ""; // Lấy threadId đã lưu
+    console.log("groupUsers =======", groupUsers);
     let notSubmitted = groupUsers.filter((user) => {
       return !user.is_bot && !userReported.includes(String(user.id));
     });
 
+    console.log("notSubmitted =======", notSubmitted);
     let report = "";
-
     if (!notSubmitted.length) {
+      console.log("----call khi tat ca da gui bai tai =======");
       report = `📌 *NGÀY ${formatedDate} TẤT CẢ CÁC THÀNH VIÊN ĐÃ GỬI BÀI TẬP.*\n`;
     } else {
       const formatedDate = getFormatedDate();
@@ -190,6 +192,14 @@ setInterval(() => {
   const now = new Date();
   const currentHours = now.getHours();
   const currentMinutes = now.getMinutes();
+  console.log("currentHours =====", currentHours);
+  console.log("currentMinutes =====", currentMinutes);
+  console.log("HOURS =====", HOURS);
+  console.log("MINUTES ======", MINUTES);
+  const test =
+    String(currentHours) === String(HOURS) &&
+    String(currentMinutes) === String(MINUTES);
+  console.log("=========check======", test);
   if (
     String(currentHours) === String(HOURS) &&
     String(currentMinutes) === String(MINUTES)
@@ -197,7 +207,7 @@ setInterval(() => {
     sendReportToGroups();
     userReportsByGroup[chatId] = [];
   }
-}, 5000);
+}, 60000);
 
 
 // Chạy server
