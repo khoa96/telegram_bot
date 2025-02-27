@@ -52,19 +52,24 @@ async function sendReport(chatId) {
       return !user.is_bot && !userReported.includes(String(user.id));
     });
 
-    const formatedDate = getFormatedDate();
-    let report = `📌 *DANH SÁCH THÀNH VIÊN CHƯA NỘP BÀI NGÀY ${formatedDate}*\n`;
-    report += notSubmitted
-      .map((user) => {
-        const mention = user.username || user.first_name || user.last_name;
-        const lastName = user.last_name || "";
-        const firstName = user.first_name || "";
-        let username = `${lastName} ${firstName}`;
-        return `@${mention} (${username})`;
-      })
-      .join("\n");
+    let report = "";
 
-    await sendMessage2(chatId, report);
+    if (!notSubmitted.length) {
+      report = `📌 *NGÀY ${formatedDate} TẤT CẢ CÁC THÀNH VIÊN ĐÃ GỬI BÀI TẬP.*\n`;
+    } else {
+      const formatedDate = getFormatedDate();
+      report = `📌 *DANH SÁCH THÀNH VIÊN CHƯA NỘP BÀI NGÀY ${formatedDate}*\n`;
+      report += notSubmitted
+        .map((user) => {
+          const mention = user.username || user.first_name || user.last_name;
+          const lastName = user.last_name || "";
+          const firstName = user.first_name || "";
+          let username = `${lastName} ${firstName}`;
+          return `@${mention} (${username})`;
+        })
+        .join("\n");
+    }
+    await sendSummary(chatId, report);
   } catch (err) {}
 }
 
@@ -156,7 +161,7 @@ async function sendMessage(chatId, text, messageThreadId) {
   }
 }
 
-async function sendMessage2(chatId, text) {
+async function sendSummary(chatId, text) {
   try {
     const response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
