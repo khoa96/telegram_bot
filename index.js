@@ -200,22 +200,16 @@ setInterval(() => {
 
   const timeString = formatter.format(now);
   const [currentHours, currentMinutes] = timeString.split(":").map(Number);
-
-  console.log(currentHours, currentMinutes);
-  console.log("currentHours =====", currentHours);
-  console.log("currentMinutes =====", currentMinutes);
-  console.log("HOURS =====", HOURS);
-  console.log("MINUTES ======", MINUTES);
-  const test =
-    String(currentHours) === String(HOURS) &&
-    String(currentMinutes) === String(MINUTES);
-  console.log("=========check 2222======", test);
   if (
     String(currentHours) === "9" &&
-    String(currentMinutes) === "50"
+    String(currentMinutes) === "57"
   ) {
     sendReportToGroups();
-    userReportsByGroup[chatId] = [];
+    // reset danh sach 
+    const groupChatIds = GROUP_CHAT_IDS;
+    for (const chatId of groupChatIds) {
+      userReportsByGroup[chatId] = []
+    }
   }
 }, 60000);
 
