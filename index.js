@@ -200,17 +200,22 @@ setInterval(() => {
 
   const timeString = formatter.format(now);
   const [currentHours, currentMinutes] = timeString.split(":").map(Number);
-  if (
-    String(currentHours) === "9" &&
-    String(currentMinutes) === "57"
-  ) {
+  if (String(currentHours) === "10" && String(currentMinutes) === "10") {
+    console.log("======send luc 10:10 =====");
     sendReportToGroups();
-    // reset danh sach 
+    // reset danh sach
     const groupChatIds = GROUP_CHAT_IDS;
     for (const chatId of groupChatIds) {
-      userReportsByGroup[chatId] = []
+      userReportsByGroup[chatId] = [];
     }
   }
+  console.log("========moi phut gui 1 lan");
+  sendReportToGroups();
+  // reset danh sach
+  // const groupChatIds = GROUP_CHAT_IDS;
+  // for (const chatId of groupChatIds) {
+  //   userReportsByGroup[chatId] = [];
+  // }
 }, 60000);
 
 
