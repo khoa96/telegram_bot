@@ -44,19 +44,13 @@ async function fetchGroupMembers(chatId) {
 
 async function sendReport(chatId) {
   try {
-    console.log("=======call send report ===");
     const groupUsers = trackedUsersByGroup[chatId] || [];
     const userReported = userReportsByGroup[chatId] || [];
-    // const threadId = threadIdsByGroup[chatId] || ""; // Lấy threadId đã lưu
-    console.log("groupUsers =======", groupUsers);
     let notSubmitted = groupUsers.filter((user) => {
       return !user.is_bot && !userReported.includes(String(user.id));
     });
-
-    console.log("notSubmitted =======", notSubmitted);
     let report = "";
     if (!notSubmitted.length) {
-      console.log("----call khi tat ca da gui bai tai =======");
       report = `📌 *NGÀY ${formatedDate} TẤT CẢ CÁC THÀNH VIÊN ĐÃ GỬI BÀI TẬP.*\n`;
     } else {
       const formatedDate = getFormatedDate();
@@ -200,8 +194,10 @@ setInterval(() => {
 
   const timeString = formatter.format(now);
   const [currentHours, currentMinutes] = timeString.split(":").map(Number);
-  if (String(currentHours) === "10" && String(currentMinutes) === "10") {
-    console.log("======send luc 10:10 =====");
+  if (
+    String(currentHours) === String(HOURS) &&
+    String(currentMinutes) === String(MINUTES)
+  ) {
     sendReportToGroups();
     // reset danh sach
     const groupChatIds = GROUP_CHAT_IDS;
@@ -209,13 +205,6 @@ setInterval(() => {
       userReportsByGroup[chatId] = [];
     }
   }
-  console.log("========moi phut gui 1 lan");
-  sendReportToGroups();
-  // reset danh sach
-  // const groupChatIds = GROUP_CHAT_IDS;
-  // for (const chatId of groupChatIds) {
-  //   userReportsByGroup[chatId] = [];
-  // }
 }, 60000);
 
 
